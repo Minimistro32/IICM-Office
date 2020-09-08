@@ -1,0 +1,62 @@
+<!--  KI stands for Key Indicator -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target='_top'>
+</head>
+
+<body>
+    <!-- Need to lock the submit button after first click to avoid multiple upload calls -->
+    <!-- Look into an upload progress bar -->
+    <input id='file' type='file'>
+    <input id='srcSheet' type="text" placeholder="Source Sheet Name">
+    <input id="Button" type='button' value="Import Data" onclick="submitForm()">
+
+</body>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script>
+    var file, src, tgt, reader = new FileReader();
+
+    // Set loadFunction
+    reader.onloadend = function (e) {
+        const formData = {
+            'fileData' : e.target.result,
+            'fileName' : file.name,
+            'sourceSheetName' : src,
+            'targetSheetName' : tgt
+        }
+        // Run the importKeyIndicatorData and close the dialog upon success
+        google.script.run
+            .withSuccessHandler(() => google.script.host.close())
+            //.withFailureHandler(() => onFailure())
+            .importData(
+                formData
+            );
+    };
+    
+    /*function onFailure(){
+      
+       //Add code to short circuit and close the dialog upon failure 
+       
+       throw new Error("Import Failed");
+       google.script.host.close();
+    }*/
+
+    // Read the file from the input once submitted
+    function submitForm() {
+        //Add code to disable further inputs and calls
+        document.getElementById("Button").disabled = true;
+        document.getElementById('srcSheet').disabled = true;
+        document.getElementById('file').disabled = true;
+        
+        file = $('#file')[0].files[0];
+        src = document.getElementById('srcSheet').value
+        tgt = "Key Indicators"
+    
+        reader.readAsDataURL(file);
+    };
+</script>
+
+</html>
